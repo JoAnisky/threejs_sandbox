@@ -14,7 +14,6 @@ const renderer = new THREE.WebGLRenderer(
     canvas: document.getElementById('webgl'),
     antialias: true
 });
-console.log(THREE);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
@@ -31,13 +30,14 @@ window.addEventListener('resize' , OnWindowResize);
 
 // #### Création de la scène #### \\
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xbfd1e5);
+scene.background = new THREE.Color(0x010101);
 
 // #### Controls #### \\
 const controls = new OrbitControls(camera, renderer.domElement);
 
 export function animate()
 {
+    dragObect()
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 }
@@ -188,6 +188,28 @@ window.addEventListener('click', event => {
         console.log(`Un objet déplaçable a été trouvé : ${draggable.userData.name}`);
     }
 });
+
+window.addEventListener('mousemove', event => {
+    moveMouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	moveMouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+});
+
+function dragObect ()
+{
+    if (draggable != null){
+        raycaster.setFromCamera(moveMouse, camera)
+        const found = raycaster.intersectObjects( scene.children );
+        if (found.length > 0){
+            for (let o of found){
+                if(!o.object.userData.ground)
+                    continue
+
+                    draggable.position.x = o.point.x
+                    draggable.position.z = o.point.z
+            }
+        }
+    }
+}
 
 createFloor();
 createBox();
