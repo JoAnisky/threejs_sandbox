@@ -168,7 +168,7 @@ const raycaster = new THREE.Raycaster();
 const clickMouse = new THREE.Vector2();
 
 // Derniere position de la souris
-const moveMouse = new THREE.Vector2;
+const moveMouse = new THREE.Vector2();
 
 var draggable: THREE.Object3D;
 
