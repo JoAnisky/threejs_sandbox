@@ -2,6 +2,7 @@ import '../styles/style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { DirectionalLight, DirectionalLightHelper, GridHelper } from 'three';
 
 // #### Création de la caméra #### \\
 const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 1500);
@@ -35,6 +36,16 @@ scene.background = new THREE.Color(0x010101);
 // #### Controls #### \\
 const controls = new OrbitControls(camera, renderer.domElement);
 
+// #### gridHelper #### \\
+function gridHelp () {
+    let scale = { x: 120, y: 2, z: 100 };
+
+    const size = scale.x;
+    const divisions = 10;
+    const gridHelper = new GridHelper( size, divisions );
+    scene.add( gridHelper )
+}
+// #### Animate fonction (for refresh) #### \\
 export function animate()
 {
     dragObect()
@@ -48,7 +59,7 @@ scene.add(hemiLight);
 
 // #### Directional light #### \\
 let dirLight = new THREE.DirectionalLight(0xffffff, 1);
-dirLight.position.set(-30, 50, -30);
+dirLight.position.set(-20, 50, -30);
 scene.add(dirLight);
 dirLight.castShadow = true;
 dirLight.shadow.mapSize.width = 2048;
@@ -58,12 +69,19 @@ dirLight.shadow.camera.right = 70;
 dirLight.shadow.camera.top = 70;
 dirLight.shadow.camera.bottom = -70;
 
+// #### HELPER - Directional light #### \\
+function dirLightHelp ()
+{
+    const dirLightHelper = new THREE.DirectionalLightHelper( dirLight, 5 );
+    scene.add(dirLightHelper);
+}
+dirLightHelp();
+
 // #### Création du sol #### \\
 function createFloor ()
 {
     let pos = { x: 0, y: -1, z: 3 };
     let scale = { x: 100, y: 2, z: 100 };
-
     let blockPlane = new THREE.Mesh(new THREE.BoxBufferGeometry(),
         new THREE.MeshPhongMaterial({
             color: 0xf9c834
@@ -78,7 +96,21 @@ function createFloor ()
     //  Object3D.userData sert a stocker des données sur l'objet 3D
     blockPlane.userData.ground = true;
 };
-
+function createWall () 
+{
+    let pos = { x: 0, y: 25, z: -46 };
+    let scale = { x: 100, y: 50, z: 2 };
+    let blockWall = new THREE.Mesh(new THREE.BoxBufferGeometry(),
+    new THREE.MeshPhongMaterial({
+        color: 0xf9c834
+    })
+);
+blockWall.position.set(pos.x, pos.y, pos.z);
+blockWall.scale.set(scale.x, scale.y, scale.z);
+blockWall.castShadow = true;
+// blockWall.receiveShadow = true;
+scene.add(blockWall);
+}
 // #### Création d'une box #### \\
 function createBox ()
 {
@@ -227,9 +259,11 @@ function dragObect ()
 }
 
 createFloor();
+createWall();
 createBox();
 createSphere();
 createCylinder();
 createCastle();
 
+gridHelp();
 animate();
