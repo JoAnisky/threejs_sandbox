@@ -21,7 +21,7 @@ renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
 // #### Window Resize #### \\
-function OnWindowResize()
+export function OnWindowResize()
 {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -36,7 +36,7 @@ scene.background = new THREE.Color(0xbfd1e5);
 // #### Controls #### \\
 const controls = new OrbitControls(camera, renderer.domElement);
 
-function animate()
+export function animate()
 {
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
@@ -74,7 +74,9 @@ function createFloor ()
     blockPlane.castShadow = true;
     blockPlane.receiveShadow = true;
     scene.add(blockPlane);
-}
+
+    blockPlane.userData.ground = true;
+};
 
 // #### Création d'une box #### \\
 function createBox ()
@@ -92,7 +94,10 @@ function createBox ()
     box.castShadow = true;
     box.receiveShadow = true;
     scene.add(box);
-}
+
+    box.userData.draggable = true;
+    box.userData.name = 'BOX';
+};
 
 // #### Création d'une sphère #### \\
 function createSphere ()
@@ -109,7 +114,10 @@ function createSphere ()
     sphere.castShadow = true;
     sphere.receiveShadow = true;
     scene.add(sphere);
-}
+    
+    sphere.userData.draggable = true;
+    sphere.userData.name = 'SPHERE';
+};
 
 // #### Création d'un cylindre #### \\
 function createCylinder ()
@@ -129,7 +137,10 @@ function createCylinder ()
     cylinder.castShadow = true;
     cylinder.receiveShadow = true;
     scene.add(cylinder);
-}
+    
+    cylinder.userData.draggable = true;
+    cylinder.userData.name = 'CYLINDER';
+};
 
 // #### Création d'un objet 3D d'après un modèle .obj #### \\
 function createCastle ()
@@ -149,7 +160,34 @@ function createCastle ()
         castle.receiveShadow = true;
         scene.add(castle);
     })
-}
+};
+
+const raycaster = new THREE.Raycaster();
+
+// Position du click
+const clickMouse = new THREE.Vector2();
+
+// Derniere position de la souris
+const moveMouse = new THREE.Vector2;
+
+var draggable: THREE.Object3D;
+
+window.addEventListener('click', event => {
+    if (draggable){
+        console.log(`déplacement de ${draggable.userData.name}terminé`);
+        draggable = null as any
+        return;
+    }
+	clickMouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	clickMouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+    raycaster.setFromCamera( clickMouse, camera );
+    const found = raycaster.intersectObjects( scene.children );
+    if(found.length > 0 && found[0].object.userData.draggable){
+        draggable = found[0].object
+        console.log(`Un objet déplaçable a été trouvé : ${draggable.userData.name}`);
+    }
+});
 
 createFloor();
 createBox();
