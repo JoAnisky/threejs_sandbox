@@ -9,6 +9,7 @@ const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerH
 
 camera.position.set(-15, 50, 150);
 camera.lookAt(new THREE.Vector3(0, 0, 0));
+
 // #### Création du Renderer #### \\
 const renderer = new THREE.WebGLRenderer(
 {
@@ -26,33 +27,35 @@ export function OnWindowResize()
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 }
 window.addEventListener('resize' , OnWindowResize);
 
-// #### Création de la scène #### \\
+// #### --  Création de la scène -- #### \\
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x010101);
 
-// #### Controls #### \\
+// #### -- Controls -- #### \\
 const controls = new OrbitControls(camera, renderer.domElement);
 
-// #### gridHelper #### \\
+// #### --  gridHelper -- #### \\
 const gridHelperCheckbox = document.getElementById('grid-helper',) as HTMLInputElement | null;
 gridHelperCheckbox?.addEventListener('click', () => {
     if (gridHelperCheckbox != null) {
-        let boolValue = false;
+        let checked = false;
         // ✅ Si checkbox checked
         if (gridHelperCheckbox.checked){
-            boolValue = true
+            checked = true
         }else{
-            boolValue = false
+            checked = false
         }
-        gridHelp(boolValue);
+        gridHelp(checked);
         // ✅ Si checkbox unchecked
     }
 });
 // #### fonction gridHelper #### \\
-function gridHelp (call: boolean) {
+function gridHelp (check: boolean) 
+{
     // Définit la taille de l'objet (d'abord stocké dans l'objet scale)
     let scale = { x: 120, y: 2, z: 100 };
     const size = scale.x;
@@ -63,16 +66,51 @@ function gridHelp (call: boolean) {
     const gridHelper = new GridHelper( size, divisions );
     // Donne un nom au grid helper (indispensable pour pouvoir le remove par la suite)
     gridHelper.name = "gridHelper";
-
     // Stocke le nom de l'objet dans une variable qui nécéssite de préciser le type d'objet
     let gridHelperName = <THREE.GridHelper><any>scene.getObjectByName('gridHelper');
-    // Si call est a true
-    if (call){
+    // Si check est a true
+    if (check){
         // Ajoute le GridHelper
         scene.add(gridHelper);
     }else{
         // Sinon retire le gridHelper
         scene.remove(gridHelperName);
+    }
+}
+
+// #### --- LIGHTS --- #### \\
+
+// ## Point Light ## \\
+const pointLight = new THREE.PointLight( 0x7f00ff, 1, 200 );
+pointLight.position.set( 10, 10, 10 );
+scene.add( pointLight );
+// # PointLight Helper # \\
+const pointLightHelperCheckbox = document.getElementById('point-light-helper',) as HTMLInputElement | null;
+
+pointLightHelperCheckbox?.addEventListener('click', () => {
+    if (pointLightHelperCheckbox != null){
+        let checked = false;
+        if (pointLightHelperCheckbox.checked){
+            checked = true;
+        }else{
+            checked = false;
+        }
+        pointLightHelper(checked)
+    }
+})
+
+function pointLightHelper(check: boolean)
+{
+    const sphereSize = 2;
+    const pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
+    pointLightHelper.name = "pointLightHelper";
+    let pointLightHelperName = <THREE.GridHelper><any>scene.getObjectByName('pointLightHelper');
+
+    if(check){
+        scene.add( pointLightHelper );
+
+    }else{
+        scene.remove(pointLightHelperName);
     }
 }
 
@@ -104,15 +142,39 @@ dirLight.shadow.camera.right = 70;
 dirLight.shadow.camera.top = 70;
 dirLight.shadow.camera.bottom = -70;
 
-// #### HELPER - Directional light #### \\
-function dirLightHelp ()
-{
-    const dirLightHelper = new THREE.DirectionalLightHelper( dirLight, 5 );
-    scene.add(dirLightHelper);
-}
-dirLightHelp();
 
-// #### Création du sol #### \\
+// #### HELPER - Directional light #### \\
+const dirLightHelper = new THREE.DirectionalLightHelper( dirLight, 10 );
+dirLightHelper.name = "dirLightHelper";
+
+// Checkbox pour activer
+const dirLightHelperCheckbox = document.getElementById('dir-light-helper',) as HTMLInputElement | null;
+
+dirLightHelperCheckbox?.addEventListener('click', () => {
+    if (dirLightHelperCheckbox != null) {
+        let checked = false;
+        if (dirLightHelperCheckbox.checked){
+            checked = true;
+        }else{
+            checked = false;
+        }
+        dirLightHelp(checked);
+    }
+})
+
+function dirLightHelp (check: boolean)
+{
+    if(check){
+        scene.add(dirLightHelper);        
+    }else{
+        let dirLightHelperName = <THREE.GridHelper><any>scene.getObjectByName('dirLightHelper');
+
+        scene.remove(dirLightHelperName)
+    }
+}
+
+// #### -- Création des Meshs -- #### \\
+// ## Création du sol ## \\
 function createFloor ()
 {
     let pos = { x: 0, y: -1, z: 3 };
@@ -146,7 +208,7 @@ blockWall.castShadow = true;
 // blockWall.receiveShadow = true;
 scene.add(blockWall);
 }
-// #### Création d'une box #### \\
+// ## Création d'une box ## \\
 function createBox ()
 {
     let scale = { x: 6, y: 6, z: 6 };
@@ -168,7 +230,7 @@ function createBox ()
     box.userData.name = 'BOX';
 };
 
-// #### Création d'une sphère #### \\
+// ## Création d'une sphère ## \\
 function createSphere ()
 {
     let radius = 4;
@@ -188,7 +250,7 @@ function createSphere ()
     sphere.userData.name = 'SPHERE';
 };
 
-// #### Création d'un cylindre #### \\
+// ## Création d'un cylindre ## \\
 function createCylinder ()
 {
     let radius = 4;
@@ -211,7 +273,7 @@ function createCylinder ()
     cylinder.userData.name = 'CYLINDER';
 };
 
-// #### Création d'un objet 3D d'après un modèle .obj #### \\
+// ## Création d'un objet 3D d'après un modèle .obj ## \\
 function createCastle ()
 {
     const objLoader = new OBJLoader();
