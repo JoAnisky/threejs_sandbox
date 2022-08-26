@@ -45,11 +45,9 @@ checkbox?.addEventListener('click', () =>{
         let boolValue = false;
         // ✅ Set checkbox checked
         if (checkbox.checked){
-            console.log("checked");
             boolValue = true
         }else{
             boolValue = false
-            console.log("pas check");
         }
         gridHelp(boolValue);
         // ✅ Set checkbox unchecked
@@ -64,15 +62,14 @@ function gridHelp (call: boolean) {
     const size = scale.x;
     const divisions = 10;
     const gridHelper = new GridHelper( size, divisions );
-    gridHelper.name = "mabite";
+    gridHelper.name = "gridHelper";
 
-    let test = <THREE.GridHelper><any>scene.getObjectByName('mabite');
+    let test = <THREE.GridHelper><any>scene.getObjectByName('gridHelper');
 
     if (call){
         scene.add(gridHelper);
     }else{
         scene.remove(test);
-        console.log("ta mere");
     }
 
 }
