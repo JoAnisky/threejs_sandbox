@@ -1,15 +1,26 @@
 body{
   margin: 0;
   padding: 0;
+  font-family: 'Montserrat', sans-serif;
+}
+h4{
+  margin: 0;
 }
 /* Canvas */
 #webgl{
   position: fixed;
 }
-#nav-helper li{
-   list-style-type: none;
+#nav-helper{
+  position:absolute;
+  width: 100vw;
+  display:flex;
+  padding: 5px 50px;
+  align-items: center;
+  column-gap: 50px;
+  color: #fafafa;
+  background-color: #262626; 
 }
-#nav-helper ul{
-  display: flex;
-  background-color: transparent;
+.helpers-container{
+  display:flex;
+  gap: 25px;
 }
