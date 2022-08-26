@@ -8,8 +8,10 @@ dans ce cas utiliser la commande NPM
 
 Le projet a été généré avec "vite"
 
-Le serveur se démarre avec la commande :
+**Ouvrir deux onglets dans le terminal pour lancer**
+
+Le serveur, avec la commande :
 > npm run dev
 
-Il faut également compiler en temps réel le fichier .ts avec :
+Le compilateur en temps réel du fichier .ts avec :
 > npx tsc --watch
