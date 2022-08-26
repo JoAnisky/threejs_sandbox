@@ -5,9 +5,17 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Three JS Sandbox</title>
-    <script type="module" src="ts/main.ts" defer></script>
+    <script type="module" src="dist/main.js" defer></script>
   </head>
   <body>
+    <nav id="nav-helper">
+      <input type="checkbox" name="subscribe" id="subscribe" />
+
+      <label for="grid-helper">Grid Helper</label>
+      <input type="checkbox" name="Grid helper" id="grid-helper">
+      <label for="dir-light-helper">Directional light Helper</label>
+      <input type="checkbox" name="Grid helper" id="dir-light-helper">
+    </nav>
     <canvas id="webgl"></canvas>
   </body>
 </html>

@@ -37,14 +37,46 @@ scene.background = new THREE.Color(0x010101);
 const controls = new OrbitControls(camera, renderer.domElement);
 
 // #### gridHelper #### \\
-function gridHelp () {
+// const gridHelpCheckbox = document.getElementById('grid-helper',) as HTMLInputElement | null;
+
+const checkbox = document.getElementById('subscribe',) as HTMLInputElement | null;
+checkbox?.addEventListener('click', () =>{
+    if (checkbox != null) {
+        let boolValue = false;
+        // ✅ Set checkbox checked
+        if (checkbox.checked){
+            console.log("checked");
+            boolValue = true
+        }else{
+            boolValue = false
+            console.log("pas check");
+        }
+        gridHelp(boolValue);
+        // ✅ Set checkbox unchecked
+        // ;
+    }
+})
+
+
+function gridHelp (call: boolean) {
     let scale = { x: 120, y: 2, z: 100 };
 
     const size = scale.x;
     const divisions = 10;
     const gridHelper = new GridHelper( size, divisions );
-    scene.add( gridHelper )
+    gridHelper.name = "mabite";
+
+    let test = <THREE.GridHelper><any>scene.getObjectByName('mabite');
+
+    if (call){
+        scene.add(gridHelper);
+    }else{
+        scene.remove(test);
+        console.log("ta mere");
+    }
+
 }
+
 // #### Animate fonction (for refresh) #### \\
 export function animate()
 {
@@ -58,7 +90,7 @@ let hemiLight = new THREE.AmbientLight(0xffffff, 0.20);
 scene.add(hemiLight);
 
 // #### Directional light #### \\
-let dirLight = new THREE.DirectionalLight(0xffffff, 1);
+let dirLight = new THREE.DirectionalLight(0xffffff, 0.85);
 dirLight.position.set(-20, 50, -30);
 scene.add(dirLight);
 dirLight.castShadow = true;
@@ -265,5 +297,5 @@ createSphere();
 createCylinder();
 createCastle();
 
-gridHelp();
+
 animate();
