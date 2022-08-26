@@ -4,15 +4,27 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
     <title>Three JS Sandbox</title>
     <script type="module" src="dist/main.js" defer></script>
   </head>
   <body>
     <nav id="nav-helper">
-      <label for="grid-helper">Grid Helper</label>
-      <input type="checkbox" name="Grid helper" id="grid-helper">
-      <label for="dir-light-helper">Directional light Helper</label>
-      <input type="checkbox" name="Grid helper" id="dir-light-helper">
+      <span>Helpers :</span>
+      <div>
+        <label for="grid-helper">Grid Helper</label>
+        <input type="checkbox" name="Grid helper" id="grid-helper">
+      </div>
+      <div>      
+        <label for="dir-light-helper">Directional Light Helper</label>
+        <input type="checkbox" name="Directional helper" id="dir-light-helper">
+      </div>
+      <div>
+        <label for="point-light-helper">Point Light Helper</label>
+        <input type="checkbox" name="Point Light helper" id="point-light-helper">
+      </div>
     </nav>
     <canvas id="webgl"></canvas>
   </body>
