@@ -101,7 +101,7 @@ pointLightHelperCheckbox?.addEventListener('click', () => {
 
 function pointLightHelper(check: boolean)
 {
-    const sphereSize = 2;
+    const sphereSize = 4;
     const pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
     pointLightHelper.name = "pointLightHelper";
     let pointLightHelperName = <THREE.GridHelper><any>scene.getObjectByName('pointLightHelper');
@@ -144,7 +144,7 @@ dirLight.shadow.camera.bottom = -70;
 
 
 // #### HELPER - Directional light #### \\
-const dirLightHelper = new THREE.DirectionalLightHelper( dirLight, 10 );
+const dirLightHelper = new THREE.DirectionalLightHelper( dirLight, 10);
 dirLightHelper.name = "dirLightHelper";
 
 // Checkbox pour activer
