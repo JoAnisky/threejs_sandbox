@@ -37,41 +37,43 @@ scene.background = new THREE.Color(0x010101);
 const controls = new OrbitControls(camera, renderer.domElement);
 
 // #### gridHelper #### \\
-// const gridHelpCheckbox = document.getElementById('grid-helper',) as HTMLInputElement | null;
-
-const checkbox = document.getElementById('subscribe',) as HTMLInputElement | null;
-checkbox?.addEventListener('click', () =>{
-    if (checkbox != null) {
+const gridHelperCheckbox = document.getElementById('grid-helper',) as HTMLInputElement | null;
+gridHelperCheckbox?.addEventListener('click', () => {
+    if (gridHelperCheckbox != null) {
         let boolValue = false;
-        // ✅ Set checkbox checked
-        if (checkbox.checked){
+        // ✅ Si checkbox checked
+        if (gridHelperCheckbox.checked){
             boolValue = true
         }else{
             boolValue = false
         }
         gridHelp(boolValue);
-        // ✅ Set checkbox unchecked
-        // ;
+        // ✅ Si checkbox unchecked
     }
-})
-
-
+});
+// #### fonction gridHelper #### \\
 function gridHelp (call: boolean) {
+    // Définit la taille de l'objet (d'abord stocké dans l'objet scale)
     let scale = { x: 120, y: 2, z: 100 };
-
     const size = scale.x;
+    // Le nombre de divisions de la ligne
     const divisions = 10;
+
+    // Instancie l'objet grid Helper
     const gridHelper = new GridHelper( size, divisions );
+    // Donne un nom au grid helper (indispensable pour pouvoir le remove par la suite)
     gridHelper.name = "gridHelper";
 
-    let test = <THREE.GridHelper><any>scene.getObjectByName('gridHelper');
-
+    // Stocke le nom de l'objet dans une variable qui nécéssite de préciser le type d'objet
+    let gridHelperName = <THREE.GridHelper><any>scene.getObjectByName('gridHelper');
+    // Si call est a true
     if (call){
+        // Ajoute le GridHelper
         scene.add(gridHelper);
     }else{
-        scene.remove(test);
+        // Sinon retire le gridHelper
+        scene.remove(gridHelperName);
     }
-
 }
 
 // #### Animate fonction (for refresh) #### \\
@@ -90,9 +92,13 @@ scene.add(hemiLight);
 let dirLight = new THREE.DirectionalLight(0xffffff, 0.85);
 dirLight.position.set(-20, 50, -30);
 scene.add(dirLight);
+
+// Ajoute une ombre à la scène
 dirLight.castShadow = true;
+// Définit la taille de l'ombre
 dirLight.shadow.mapSize.width = 2048;
 dirLight.shadow.mapSize.height = 2048;
+// Définit la position de l'ombre
 dirLight.shadow.camera.left = -70;
 dirLight.shadow.camera.right = 70;
 dirLight.shadow.camera.top = 70;
