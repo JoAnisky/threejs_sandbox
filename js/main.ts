@@ -7,7 +7,7 @@ import { DirectionalLight, DirectionalLightHelper, GridHelper } from 'three';
 // #### Création de la caméra #### \\
 const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 1500);
 
-camera.position.set(-15, 50, 150);
+camera.position.set(-25, 70, 250);
 camera.lookAt(new THREE.Vector3(0, 0, 0));
 
 // #### Création du Renderer #### \\
@@ -36,7 +36,7 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x010101);
 
 // #### -- Controls -- #### \\
-const controls = new OrbitControls(camera, renderer.domElement);
+const controls = new OrbitControls( camera, renderer.domElement );
 
 // #### --  gridHelper -- #### \\
 const gridHelperCheckbox = document.getElementById('grid-helper',) as HTMLInputElement | null;
@@ -142,7 +142,6 @@ dirLight.shadow.camera.right = 70;
 dirLight.shadow.camera.top = 70;
 dirLight.shadow.camera.bottom = -70;
 
-
 // #### HELPER - Directional light #### \\
 const dirLightHelper = new THREE.DirectionalLightHelper( dirLight, 10);
 dirLightHelper.name = "dirLightHelper";
@@ -202,11 +201,11 @@ function createWall ()
         color: 0xf9c834
     })
 );
-blockWall.position.set(pos.x, pos.y, pos.z);
-blockWall.scale.set(scale.x, scale.y, scale.z);
-blockWall.castShadow = true;
-// blockWall.receiveShadow = true;
-scene.add(blockWall);
+    blockWall.position.set(pos.x, pos.y, pos.z);
+    blockWall.scale.set(scale.x, scale.y, scale.z);
+    blockWall.castShadow = true;
+    // blockWall.receiveShadow = true;
+    scene.add(blockWall);
 }
 // ## Création d'une box ## \\
 function createBox ()
