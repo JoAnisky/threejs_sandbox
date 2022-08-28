@@ -2,7 +2,7 @@ import '../styles/style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { DirectionalLight, DirectionalLightHelper, GridHelper } from 'three';
+import { CircleBufferGeometry, CircleGeometry, DirectionalLight, DirectionalLightHelper, GridHelper, MeshBasicMaterial } from 'three';
 
 // #### Création de la caméra #### \\
 const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 1500);
@@ -143,7 +143,7 @@ dirLight.shadow.camera.top = 70;
 dirLight.shadow.camera.bottom = -70;
 
 // #### HELPER - Directional light #### \\
-const dirLightHelper = new THREE.DirectionalLightHelper( dirLight, 10);
+const dirLightHelper = new THREE.DirectionalLightHelper( dirLight, 10 );
 dirLightHelper.name = "dirLightHelper";
 
 // Checkbox pour activer
@@ -167,7 +167,6 @@ function dirLightHelp (check: boolean)
         scene.add(dirLightHelper);        
     }else{
         let dirLightHelperName = <THREE.GridHelper><any>scene.getObjectByName('dirLightHelper');
-
         scene.remove(dirLightHelperName)
     }
 }
@@ -183,11 +182,11 @@ function createFloor ()
             color: 0xf9c834
         })
     );
-    blockPlane.position.set(pos.x, pos.y, pos.z);
-    blockPlane.scale.set(scale.x, scale.y, scale.z);
+    blockPlane.position.set( pos.x, pos.y, pos.z );
+    blockPlane.scale.set( scale.x, scale.y, scale.z );
     blockPlane.castShadow = true;
     blockPlane.receiveShadow = true;
-    scene.add(blockPlane);
+    scene.add( blockPlane );
 
     //  Object3D.userData sert a stocker des données sur l'objet 3D
     blockPlane.userData.ground = true;
@@ -197,16 +196,45 @@ function createWall ()
     let pos = { x: 0, y: 25, z: -46 };
     let scale = { x: 100, y: 50, z: 2 };
     let blockWall = new THREE.Mesh(new THREE.BoxBufferGeometry(),
-    new THREE.MeshPhongMaterial({
-        color: 0xf9c834
-    })
-);
+        new THREE.MeshPhongMaterial({
+            color: 0xf9c834
+        })
+    );
     blockWall.position.set(pos.x, pos.y, pos.z);
     blockWall.scale.set(scale.x, scale.y, scale.z);
     blockWall.castShadow = true;
     // blockWall.receiveShadow = true;
     scene.add(blockWall);
+
+    blockWall.position.set( pos.x, pos.y, pos.z );
+    blockWall.scale.set( scale.x, scale.y, scale.z );
+    blockWall.castShadow = true;
+    // blockWall.receiveShadow = true;
+    scene.add( blockWall );
 }
+// ## Création d'un cercle ## \\
+function createRingCircle()
+{
+    let pos = {x: 0, y: 10, z: 0};
+    let radius = 3;
+    const geometry = new THREE.CircleGeometry( radius, 32 );
+    const material = new THREE.MeshBasicMaterial({
+        color: 0xFFFFFF
+    })
+    const circle = new THREE.Mesh( geometry, material );
+    circle.position.set( pos.x, pos.y, pos.z );
+    scene.add( circle );
+    let innerRadius = 4.2;
+    let outerRadius = 4;
+    const ringGeo = new THREE.RingGeometry(innerRadius, outerRadius, 42, 5, 32 );
+    const ringMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.DoubleSide } );
+    const ring = new THREE.Mesh( ringGeo, ringMaterial );
+    ring.position.set( pos.x, pos.y, pos.z );
+    scene.add( ring );
+}
+createRingCircle();
+
+
 // ## Création d'une box ## \\
 function createBox ()
 {
@@ -218,11 +246,11 @@ function createBox ()
             color: 0xDC143C
         })
     );
-    box.position.set(pos.x, pos.y, pos.z);
-    box.scale.set(scale.x, scale.y, scale.z);
+    box.position.set( pos.x, pos.y, pos.z );
+    box.scale.set( scale.x, scale.y, scale.z );
     box.castShadow = true;
     box.receiveShadow = true;
-    scene.add(box);
+    scene.add( box );
     // objet.userData.draggable sert à dire que l'objet sera "draggable"
     box.userData.draggable = true;
     // objet.userData.name permet de lui attribuer un nom
@@ -240,10 +268,10 @@ function createSphere ()
             color: 0x43a1f4
         })
     );
-    sphere.position.set(pos.x, pos.y, pos.z);
+    sphere.position.set( pos.x, pos.y, pos.z );
     sphere.castShadow = true;
     sphere.receiveShadow = true;
-    scene.add(sphere);
+    scene.add( sphere );
     
     sphere.userData.draggable = true;
     sphere.userData.name = 'SPHERE';
@@ -263,10 +291,10 @@ function createCylinder ()
             color: 0x90ee90
         })
     )
-    cylinder.position.set(pos.x, pos.y, pos.z);
+    cylinder.position.set( pos.x, pos.y, pos.z );
     cylinder.castShadow = true;
     cylinder.receiveShadow = true;
-    scene.add(cylinder);
+    scene.add( cylinder );
     
     cylinder.userData.draggable = true;
     cylinder.userData.name = 'CYLINDER';
@@ -276,7 +304,7 @@ function createCylinder ()
 function createCastle ()
 {
     const objLoader = new OBJLoader();
-    objLoader.loadAsync('../assets/models/castle/castle.obj').then((group) =>{
+    objLoader.loadAsync('../assets/models/castle/castle.obj').then(( group ) =>{
         const castle = group.children[0];
 
         castle.position.x = -15;
@@ -340,7 +368,7 @@ window.addEventListener('mousemove', event => {
 function dragObect ()
 {
     if (draggable != null){
-        raycaster.setFromCamera(moveMouse, camera)
+        raycaster.setFromCamera( moveMouse, camera )
         const found = raycaster.intersectObjects( scene.children );
         if (found.length > 0){
             for (let o of found){
@@ -360,6 +388,5 @@ createBox();
 createSphere();
 createCylinder();
 createCastle();
-
 
 animate();
