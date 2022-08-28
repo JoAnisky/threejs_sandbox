@@ -36,7 +36,11 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x010101);
 
 // #### -- Controls -- #### \\
-const controls = new OrbitControls( camera, renderer.domElement );
+
+    const controls = new OrbitControls( camera, renderer.domElement );
+    controls.maxDistance = 1;
+    controls.maxDistance = 1000;
+
 
 // #### --  gridHelper -- #### \\
 const gridHelperCheckbox = document.getElementById('grid-helper',) as HTMLInputElement | null;
@@ -117,9 +121,11 @@ function pointLightHelper(check: boolean)
 // #### Animate fonction (for refresh) #### \\
 export function animate()
 {
-    dragObect()
-    renderer.render(scene, camera);
     requestAnimationFrame(animate);
+    dragObect()
+    controls.update();
+    // interactionManager.update();
+    renderer.render(scene, camera);
 }
 
 // #### Ambient Light #### \\
@@ -213,8 +219,8 @@ function createWall ()
     scene.add( blockWall );
 }
 // ## Création d'un cercle ## \\
-function createRingCircle()
-{
+// function createRingCircle()
+// {
     let pos = {x: 0, y: 10, z: 0};
     let radius = 3;
     const geometry = new THREE.CircleGeometry( radius, 32 );
@@ -224,16 +230,19 @@ function createRingCircle()
     const circle = new THREE.Mesh( geometry, material );
     circle.position.set( pos.x, pos.y, pos.z );
     scene.add( circle );
+    // Ring Geometry pour entourer le rond
     let innerRadius = 4.2;
     let outerRadius = 4;
     const ringGeo = new THREE.RingGeometry(innerRadius, outerRadius, 42, 5, 32 );
     const ringMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.DoubleSide } );
     const ring = new THREE.Mesh( ringGeo, ringMaterial );
-    ring.position.set( pos.x, pos.y, pos.z );
-    scene.add( ring );
-}
-createRingCircle();
+    circle.add( ring ); 
+    circle.userData.draggable = true;
+    circle.userData.name = 'Circle';
 
+circle.addEventListener('click', (event) =>{
+    console.log("cercle cliqué");
+});
 
 // ## Création d'une box ## \\
 function createBox ()
@@ -357,6 +366,10 @@ window.addEventListener('click', event => {
         // stocke le dans la variable globale draggable
         draggable = found[0].object
         console.log(`Un objet déplaçable a été trouvé : ${draggable.userData.name}`);
+        if (draggable.userData.name == "Circle"){
+            console.log("coucou le cercle");
+            camera.position.set(-25, 70, 200);
+        }
     }
 });
 
@@ -388,5 +401,5 @@ createBox();
 createSphere();
 createCylinder();
 createCastle();
-
+// controls();
 animate();
