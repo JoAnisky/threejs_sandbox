@@ -359,7 +359,6 @@ window.addEventListener('click', event => {
     // Ici on calcule quel objet intersecte
     const found = raycaster.intersectObjects( scene.children );
     // Cela stocke dans un tableau les coordonées
-
     // Si tu trouve un object qui intersecte
     // Et que l'objet trouvé est draggable true
     if(found.length > 0 && found[0].object.userData.draggable){
