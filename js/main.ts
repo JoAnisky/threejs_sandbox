@@ -7,8 +7,8 @@ import { CircleBufferGeometry, CircleGeometry, DirectionalLight, DirectionalLigh
 // #### Création de la caméra #### \\
 const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 1500);
 
-camera.position.set(-25, 70, 250);
-camera.lookAt(new THREE.Vector3(0, 0, 0));
+camera.position.set(-70, 60, 200);
+// camera.lookAt(new THREE.Vector3(0, 0, 0));
 
 // #### Création du Renderer #### \\
 const renderer = new THREE.WebGLRenderer(
@@ -37,9 +37,9 @@ scene.background = new THREE.Color(0x010101);
 
 // #### -- Controls -- #### \\
 
-    const controls = new OrbitControls( camera, renderer.domElement );
-    controls.maxDistance = 1;
-    controls.maxDistance = 1000;
+const controls = new OrbitControls( camera, renderer.domElement );
+controls.maxDistance = 1;
+controls.maxDistance = 1000;
 
 
 // #### --  gridHelper -- #### \\
@@ -221,28 +221,28 @@ function createWall ()
 // ## Création d'un cercle ## \\
 // function createRingCircle()
 // {
-    let pos = {x: 0, y: 10, z: 0};
-    let radius = 3;
-    const geometry = new THREE.CircleGeometry( radius, 32 );
-    const material = new THREE.MeshBasicMaterial({
-        color: 0xFFFFFF
-    })
-    const circle = new THREE.Mesh( geometry, material );
-    circle.position.set( pos.x, pos.y, pos.z );
-    scene.add( circle );
-    // Ring Geometry pour entourer le rond
-    let innerRadius = 4.2;
-    let outerRadius = 4;
-    const ringGeo = new THREE.RingGeometry(innerRadius, outerRadius, 42, 5, 32 );
-    const ringMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.DoubleSide } );
-    const ring = new THREE.Mesh( ringGeo, ringMaterial );
-    circle.add( ring ); 
-    circle.userData.draggable = true;
-    circle.userData.name = 'Circle';
+    // let pos = {x: 0, y: 10, z: 0};
+    // let radius = 3;
+    // const geometry = new THREE.CircleGeometry( radius, 32 );
+    // const material = new THREE.MeshBasicMaterial({
+    //     color: 0xFFFFFF
+    // })
+    // const circle = new THREE.Mesh( geometry, material );
+    // circle.position.set( pos.x, pos.y, pos.z );
+    // scene.add( circle );
+    // // Ring Geometry pour entourer le rond
+    // let innerRadius = 4.2;
+    // let outerRadius = 4;
+    // const ringGeo = new THREE.RingGeometry(innerRadius, outerRadius, 42, 5, 32 );
+    // const ringMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, side: THREE.DoubleSide } );
+    // const ring = new THREE.Mesh( ringGeo, ringMaterial );
+    // circle.add( ring ); 
+    // circle.userData.draggable = true;
+    // circle.userData.name = 'Circle';
 
-circle.addEventListener('click', (event) =>{
-    console.log("cercle cliqué");
-});
+// circle.addEventListener('click', (event) =>{
+//     console.log("cercle cliqué");
+// });
 
 // ## Création d'une box ## \\
 function createBox ()
@@ -331,9 +331,45 @@ function createCastle ()
         castle.userData.name = 'CASTLE';
     })
 };
-
+const addNewBoxMesh = ( x: number, y: number, z:number ) => {
+    const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const boxMaterial = new THREE.MeshPhongMaterial({
+       color: 0xfafafa,
+    });
+    const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
+    boxMesh.position.set(x, y, z);
+    scene.add(boxMesh);
+ }
+ 
+ addNewBoxMesh(0, 2, 0);
+ addNewBoxMesh(2, 2, 0);
+ addNewBoxMesh(-2, 2, 0);
+ addNewBoxMesh(0, 2, -2);
+ addNewBoxMesh(2, 2, -2);
+ addNewBoxMesh(-2, 2, -2);
+ addNewBoxMesh(0, 2, 2);
+ addNewBoxMesh(2, 2, 2);
+ addNewBoxMesh(-2, 2, 2);
 // #### Instance du raycaster #### \\
 const raycaster = new THREE.Raycaster();
+
+// Raycaster EXEMPLE 2 : 
+// const pointer = new THREE.Vector2();
+
+// const onMouseMove = (event: MouseEvent) => {
+//     // Calcule les coordonées du pointer de souris
+//     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+//     pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+//     raycaster.setFromCamera(pointer, camera);
+//     const intersects = raycaster.intersectObjects(scene.children);
+
+//     for (let i = 0; i < intersects.length; i++){
+//         intersects[i].object['material']['color'].set(0xff0000);
+//         // intersects[i].object.material.color.set(0xff0000)
+//     }
+// }
+// window.addEventListener('mousemove', onMouseMove);
 
 // #### Position du click avec 2 vecteurs x et y #### \\
 const clickMouse = new THREE.Vector2();
