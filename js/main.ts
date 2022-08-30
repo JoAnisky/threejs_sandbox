@@ -2,26 +2,42 @@ import '../styles/style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { CircleBufferGeometry, CircleGeometry, DirectionalLight, DirectionalLightHelper, GridHelper, MeshBasicMaterial } from 'three';
+import { CircleBufferGeometry, CircleGeometry, DirectionalLight, DirectionalLightHelper, GridHelper, Mesh, MeshBasicMaterial, Object3D, ShapeGeometry } from 'three';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 
-// #### Création de la caméra #### \\
-const camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 1500);
 
-camera.position.set(-70, 60, 200);
-// camera.lookAt(new THREE.Vector3(0, 0, 0));
+var scene: THREE.Scene;
+var renderer: THREE.WebGLRenderer;
+var camera: THREE.PerspectiveCamera;
 
-// #### Création du Renderer #### \\
-const renderer = new THREE.WebGLRenderer(
-{
-    // canvas: document.getElementById('webgl'),
-    antialias: true
-});
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
-document.body.appendChild(renderer.domElement);
+function init(){
+    //# ------------- SCENE ------------- #\\
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x010101);
 
-// #### Window Resize #### \\
+    //# ------------- RENDERER ------------- #\\
+    renderer = new THREE.WebGLRenderer(
+    {
+        // canvas: document.getElementById('webgl'),
+        antialias: true
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    document.body.appendChild(renderer.domElement);
+
+    //# ------------- CAMERA ------------- #\\
+    camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 1, 1500);
+    camera.position.set(-70, 60, 200);
+    // camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+    //# ------------- Ambient Light ------------- #\\
+    let hemiLight = new THREE.AmbientLight(0xffffff, 0.20);
+    scene.add(hemiLight);
+}
+init();
+
+//# ------------- WINDOW RESIZE FONCTION ------------- #\\
 export function OnWindowResize()
 {
     camera.aspect = window.innerWidth / window.innerHeight;
@@ -31,18 +47,13 @@ export function OnWindowResize()
 }
 window.addEventListener('resize' , OnWindowResize);
 
-// #### --  Création de la scène -- #### \\
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x010101);
-
-// #### -- Controls -- #### \\
-
+//# ------------- Controls ------------- #\\
 const controls = new OrbitControls( camera, renderer.domElement );
 controls.maxDistance = 1;
 controls.maxDistance = 1000;
 
-
-// #### --  gridHelper -- #### \\
+//# ------------- HELPERS ------------- #\\
+// --  gridHelper -- \\
 const gridHelperCheckbox = document.getElementById('grid-helper',) as HTMLInputElement | null;
 gridHelperCheckbox?.addEventListener('click', () => {
     if (gridHelperCheckbox != null) {
@@ -57,7 +68,7 @@ gridHelperCheckbox?.addEventListener('click', () => {
         // ✅ Si checkbox unchecked
     }
 });
-// #### fonction gridHelper #### \\
+// -- Fonction gridHelper -- \\
 function gridHelp (check: boolean) 
 {
     // Définit la taille de l'objet (d'abord stocké dans l'objet scale)
@@ -82,7 +93,7 @@ function gridHelp (check: boolean)
     }
 }
 
-// #### --- LIGHTS --- #### \\
+//# ------------- LIGHTS --- ------------- #\\
 
 // ## Point Light ## \\
 const pointLight = new THREE.PointLight( 0x7f00ff, 1, 200 );
@@ -118,7 +129,7 @@ function pointLightHelper(check: boolean)
     }
 }
 
-// #### Animate fonction (for refresh) #### \\
+//# ------------- Animate fonction (for refresh) ------------- #\\
 export function animate()
 {
     requestAnimationFrame(animate);
@@ -128,12 +139,9 @@ export function animate()
     renderer.render(scene, camera);
 }
 
-// #### Ambient Light #### \\
-let hemiLight = new THREE.AmbientLight(0xffffff, 0.20);
-scene.add(hemiLight);
+// # Directional light # \\
 
-// #### Directional light #### \\
-let dirLight = new THREE.DirectionalLight(0xffffff, 0.85);
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.85);
 dirLight.position.set(-20, 50, -30);
 scene.add(dirLight);
 
@@ -152,7 +160,7 @@ dirLight.shadow.camera.bottom = -70;
 const dirLightHelper = new THREE.DirectionalLightHelper( dirLight, 10 );
 dirLightHelper.name = "dirLightHelper";
 
-// Checkbox pour activer
+// Checkbox pour activer le directionnal light helper
 const dirLightHelperCheckbox = document.getElementById('dir-light-helper',) as HTMLInputElement | null;
 
 dirLightHelperCheckbox?.addEventListener('click', () => {
@@ -177,8 +185,37 @@ function dirLightHelp (check: boolean)
     }
 }
 
-// #### -- Création des Meshs -- #### \\
-// ## Création du sol ## \\
+//# ------------- TEXTE ------------- #\\
+const fontLoader = new FontLoader();
+fontLoader.load( 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',
+    function ( font, )
+    {
+        const matLite = new MeshBasicMaterial({
+            color: 0xFAFAFA,
+            transparent: true,
+            opacity: 1,
+            side: THREE.DoubleSide
+        })
+
+        const message = "Super SandBox";
+
+        const shapes = font.generateShapes( message, 5 );
+
+        const geometry = new ShapeGeometry( shapes );
+        geometry.computeBoundingBox();
+
+        const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
+        geometry.translate ( xMid, 0, 0 );
+
+        const text = new Mesh( geometry, matLite );
+        text.position.z =  - 42.7;
+        text.position.y = 25;
+        scene.add( text )
+    }
+);
+
+//# ------------- Création des Meshs  ------------- #\\
+// # Création du sol # \\
 function createFloor ()
 {
     let pos = { x: 0, y: -1, z: 3 };
@@ -218,7 +255,7 @@ function createWall ()
     // blockWall.receiveShadow = true;
     scene.add( blockWall );
 }
-// ## Création d'un cercle ## \\
+// # Création d'un cercle # \\
 // function createRingCircle()
 // {
     // let pos = {x: 0, y: 10, z: 0};
@@ -266,7 +303,8 @@ function createBox ()
     box.userData.name = 'BOX';
 };
 
-// ## Création d'une sphère ## \\
+
+// # Création d'une sphère ## \\
 function createSphere ()
 {
     let radius = 4;
@@ -286,7 +324,7 @@ function createSphere ()
     sphere.userData.name = 'SPHERE';
 };
 
-// ## Création d'un cylindre ## \\
+// # Création d'un cylindre # \\
 function createCylinder ()
 {
     let radius = 4;
@@ -339,7 +377,7 @@ const addNewBoxMesh = ( x: number, y: number, z:number ) => {
     const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
     boxMesh.position.set(x, y, z);
     scene.add(boxMesh);
- }
+}
  
  addNewBoxMesh(0, 2, 0);
  addNewBoxMesh(2, 2, 0);
@@ -350,7 +388,8 @@ const addNewBoxMesh = ( x: number, y: number, z:number ) => {
  addNewBoxMesh(0, 2, 2);
  addNewBoxMesh(2, 2, 2);
  addNewBoxMesh(-2, 2, 2);
-// #### Instance du raycaster #### \\
+//# ------------- RAYCASTER  ------------- #\\
+//# Instance du raycaster #\\
 const raycaster = new THREE.Raycaster();
 
 // Raycaster EXEMPLE 2 : 
@@ -374,12 +413,13 @@ const raycaster = new THREE.Raycaster();
 // #### Position du click avec 2 vecteurs x et y #### \\
 const clickMouse = new THREE.Vector2();
 
-// #### Derniere position de la souris #### \\
+//# Derniere position de la souris #\\
 const moveMouse = new THREE.Vector2();
 
-// #### la variable qui va contenir le dernier objet cliqué
+//# la variable qui va contenir le dernier objet cliqué
 var draggable: THREE.Object3D;
 
+//# ------------- Intéraction avec les objets au click ------------- #\\
 window.addEventListener('click', event => {
     if (draggable){
         console.log(`déplacement de ${draggable.userData.name} terminé`);
@@ -407,12 +447,12 @@ window.addEventListener('click', event => {
         }
     }
 });
+//# ------------- Déplacement des objets ------------- #\\
 
 window.addEventListener('mousemove', event => {
     moveMouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 	moveMouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 });
-
 function dragObect ()
 {
     if (draggable != null){
@@ -430,6 +470,7 @@ function dragObect ()
     }
 }
 
+//# ------------- Instanciation des objets ------------- #\\
 createFloor();
 createWall();
 createBox();
