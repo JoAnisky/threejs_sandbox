@@ -1,19 +1,43 @@
 import '../styles/style.css';
 import * as THREE from 'three';
+// Controle de la scène
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// import d'objets 3D
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { CircleBufferGeometry, CircleGeometry, DirectionalLight, DirectionalLightHelper, GridHelper, Mesh, MeshBasicMaterial, Object3D, ShapeGeometry } from 'three';
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+// Meshs
+import { BoxGeometry, CircleBufferGeometry, CircleGeometry, ConeGeometry, DirectionalLight, DirectionalLightHelper, FogExp2, GridHelper, Mesh, MeshBasicMaterial, MeshPhongMaterial, Object3D, ShapeGeometry, TextureLoader } from 'three';
+// Fonts
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 
+/* RAPPELS MATERIAL
+-- MeshBasicMaterial --  
+(le Material le plus léger et rapide – Mais le moins réaliste des trois)
+Cette classe de Material est utilisée pour dessiner des objets 3D de manière ultra-basique, sans prise en compte de l’éclairage ou shading.
 
+-- MeshLambertMaterial --
+(à mi-chemin entre Basic et Phong)
+Ce type de Material est utilisé pour les surfaces non-brillantes et sans reflets lumineux.
+
+L’éclairage et le shading sont calculés grâce aux sommets de la structure 3D, puis appliqués sur les faces de l’objet.
+
+-- MeshPhongMaterial --
+(le plus lourd et lent pour le processeur – Mais le plus réaliste des trois)
+La classe MeshPhongMaterial est utilisée pour créer des surfaces brillantes, avec des reflets lumineux.
+
+L’éclairage et le shading sont calculés pour chaque pixel de l’objet, puis appliqués sur la surface.
+*/
 var scene: THREE.Scene;
 var renderer: THREE.WebGLRenderer;
 var camera: THREE.PerspectiveCamera;
+var controls = undefined;
 
 function init(){
     //# ------------- SCENE ------------- #\\
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x010101);
+    // Ajout de brouillard dans la scène
+    // scene.fog = new THREE.FogExp2(0x2f3640, 0.005)
 
     //# ------------- RENDERER ------------- #\\
     renderer = new THREE.WebGLRenderer(
@@ -31,6 +55,13 @@ function init(){
     camera.position.set(-70, 60, 200);
     // camera.lookAt(new THREE.Vector3(0, 0, 0));
 
+    //# ------------- Controls ------------- #\\
+    controls = new OrbitControls( camera, renderer.domElement );
+    controls.maxDistance = 1;
+    controls.maxDistance = 1000;
+    // Pour fluidifier le mouvement de la caméra
+    // controls.enableDamping = true;
+    // controls.dampingFactor = 0.002
     //# ------------- Ambient Light ------------- #\\
     let hemiLight = new THREE.AmbientLight(0xffffff, 0.20);
     scene.add(hemiLight);
@@ -47,10 +78,7 @@ export function OnWindowResize()
 }
 window.addEventListener('resize' , OnWindowResize);
 
-//# ------------- Controls ------------- #\\
-const controls = new OrbitControls( camera, renderer.domElement );
-controls.maxDistance = 1;
-controls.maxDistance = 1000;
+
 
 //# ------------- HELPERS ------------- #\\
 // --  gridHelper -- \\
@@ -94,11 +122,14 @@ function gridHelp (check: boolean)
 }
 
 //# ------------- LIGHTS --- ------------- #\\
-
+var pointLight: THREE.PointLight;
 // ## Point Light ## \\
-const pointLight = new THREE.PointLight( 0x7f00ff, 1, 200 );
-pointLight.position.set( 10, 10, 10 );
-scene.add( pointLight );
+function pointLightAdd(){
+    pointLight = new THREE.PointLight( 0xFF15FF, 1, 130 );
+    pointLight.position.set( 0, 20, 50 );
+    scene.add( pointLight );
+}
+pointLightAdd()
 // # PointLight Helper # \\
 const pointLightHelperCheckbox = document.getElementById('point-light-helper',) as HTMLInputElement | null;
 
@@ -132,17 +163,16 @@ function pointLightHelper(check: boolean)
 //# ------------- Animate fonction (for refresh) ------------- #\\
 export function animate()
 {
-    requestAnimationFrame(animate);
     dragObect()
     controls.update();
     // interactionManager.update();
     renderer.render(scene, camera);
+    requestAnimationFrame(animate);
 }
 
 // # Directional light # \\
-
 const dirLight = new THREE.DirectionalLight(0xffffff, 0.85);
-dirLight.position.set(-20, 50, -30);
+dirLight.position.set(-30, 70, -30);
 scene.add(dirLight);
 
 // Ajoute une ombre à la scène
@@ -188,7 +218,7 @@ function dirLightHelp (check: boolean)
 //# ------------- TEXTE ------------- #\\
 const fontLoader = new FontLoader();
 fontLoader.load( 'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',
-    function ( font, )
+    function ( font )
     {
         const matLite = new MeshBasicMaterial({
             color: 0xFAFAFA,
@@ -282,12 +312,13 @@ function createWall ()
 // });
 
 // ## Création d'une box ## \\
+var box: THREE.Mesh
 function createBox ()
 {
     let scale = { x: 6, y: 6, z: 6 };
     let pos = { x: 15, y: scale.y / 2, z: 15 };
 
-    let box = new THREE.Mesh(new THREE.BoxBufferGeometry(),
+    box = new THREE.Mesh(new THREE.BoxBufferGeometry(),
         new THREE.MeshPhongMaterial({
             color: 0xDC143C
         })
@@ -302,8 +333,40 @@ function createBox ()
     // objet.userData.name permet de lui attribuer un nom
     box.userData.name = 'BOX';
 };
+// # Création d'un cube essai de textures # \\
+var cube: THREE.Mesh
+function createCube()
+{
+    let pos = {x: 0, y: 5, z: -30 };
 
+    const loader = new TextureLoader();
 
+    const geometry = new BoxGeometry( 10, 10, 10 );
+    const material = new MeshPhongMaterial({
+        map: loader.load('assets/images/textures/gold_texture.jpg'),
+        shininess: 200
+    })
+    cube = new Mesh( geometry, material );
+    cube.position.set( pos.x, pos.y, pos.z )
+    scene.add(cube)
+}
+createCube();
+// # Création d'un cône # \\
+var cone: THREE.Mesh;
+function createCone()
+{
+    let pos = {x: 15, y: 2.5, z: 0 }
+    const geometry = new ConeGeometry( 5, 5, 35 );
+    const material = new MeshPhongMaterial({ color: 0x00ffff });
+    cone = new Mesh( geometry, material );
+    cone.position.set( pos.x, pos.y, pos.z );
+    cone.castShadow = true;
+    cone.receiveShadow = true;
+    scene.add( cone );
+
+    cone.userData.draggable = true;
+    cone.userData.name = "CONE"
+}
 // # Création d'une sphère ## \\
 function createSphere ()
 {
@@ -369,6 +432,33 @@ function createCastle ()
         castle.userData.name = 'CASTLE';
     })
 };
+// ## Deuxième exmple : importation .obj et texture .mtl
+let ironMan = undefined;
+function createIronMan()
+{
+    var mtlLoader = new MTLLoader();
+    mtlLoader.load("assets/models/IronMan/IronMan.mtl",
+    function (materials)
+    {
+        materials.preload();
+        var objLoader = new OBJLoader();
+        objLoader.setMaterials(materials);
+        console.log(materials);
+        objLoader.load("assets/models/IronMan/IronMan.obj",
+        
+        function(object){
+            ironMan = object;
+            let size = 0.15
+            ironMan.position.set(0, 0, 15)
+            ironMan.scale.set( size, size, size)
+            ironMan.castShadow = true;
+            ironMan.receiveShadow = true;
+            scene.add(ironMan)
+        })
+    })
+}
+createIronMan()
+
 const addNewBoxMesh = ( x: number, y: number, z:number ) => {
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
     const boxMaterial = new THREE.MeshPhongMaterial({
@@ -473,6 +563,7 @@ function dragObect ()
 //# ------------- Instanciation des objets ------------- #\\
 createFloor();
 createWall();
+createCone();
 createBox();
 createSphere();
 createCylinder();
