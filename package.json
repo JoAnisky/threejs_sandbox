@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "three": "^0.143.0",
-    "three-obj-mtl-loader": "^1.0.3",
-    "three.interactive": "^1.4.0"
+    "three-obj-mtl-loader": "^1.0.3"
   }
 }

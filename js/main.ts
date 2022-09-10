@@ -121,7 +121,7 @@ function gridHelp (check: boolean)
     }
 }
 
-//# ------------- LIGHTS --- ------------- #\\
+//# ------------- LIGHTS -------------- #\\
 var pointLight: THREE.PointLight;
 // ## Point Light ## \\
 function pointLightAdd(){
@@ -316,7 +316,7 @@ var box: THREE.Mesh
 function createBox ()
 {
     let scale = { x: 6, y: 6, z: 6 };
-    let pos = { x: 15, y: scale.y / 2, z: 15 };
+    let pos = { x: -20, y: scale.y / 2, z: 15 };
 
     box = new THREE.Mesh(new THREE.BoxBufferGeometry(),
         new THREE.MeshPhongMaterial({
@@ -337,11 +337,11 @@ function createBox ()
 var cube: THREE.Mesh
 function createCube()
 {
-    let pos = {x: 0, y: 5, z: -30 };
+    let pos = {x: 35, y: 2.5, z: 25 };
 
     const loader = new TextureLoader();
 
-    const geometry = new BoxGeometry( 10, 10, 10 );
+    const geometry = new BoxGeometry( 5, 5, 5 );
     const material = new MeshPhongMaterial({
         map: loader.load('assets/images/textures/gold_texture.jpg'),
         shininess: 200
@@ -355,7 +355,7 @@ createCube();
 var cone: THREE.Mesh;
 function createCone()
 {
-    let pos = {x: 15, y: 2.5, z: 0 }
+    let pos = {x: 35, y: 2.5, z: -10 }
     const geometry = new ConeGeometry( 5, 5, 35 );
     const material = new MeshPhongMaterial({ color: 0x00ffff });
     cone = new Mesh( geometry, material );
@@ -364,14 +364,14 @@ function createCone()
     cone.receiveShadow = true;
     scene.add( cone );
 
-    cone.userData.draggable = true;
+    // cone.userData.draggable = true;
     cone.userData.name = "CONE"
 }
 // # Création d'une sphère ## \\
 function createSphere ()
 {
     let radius = 4;
-    let pos = { x: 15, y: radius, z: -15};
+    let pos = { x: -20, y: radius, z: -15};
 
     let sphere = new THREE.Mesh(new THREE.SphereBufferGeometry(radius, 32, 32),
         new THREE.MeshPhongMaterial({
@@ -392,7 +392,7 @@ function createCylinder ()
 {
     let radius = 4;
     let height = 6;
-    let pos = { x: -15, y: height / 2, z: 15 };
+    let pos = { x: -40, y: height / 2, z: 15 };
 
     // threejs
     let cylinder = new THREE.Mesh(
@@ -417,7 +417,7 @@ function createCastle ()
     objLoader.loadAsync('../assets/models/castle/castle.obj').then(( group ) =>{
         const castle = group.children[0];
 
-        castle.position.x = -15;
+        castle.position.x = -40;
         castle.position.z = -15;
 
         castle.scale.x = 5;
@@ -453,11 +453,12 @@ function createIronMan()
             ironMan.scale.set( size, size, size)
             ironMan.castShadow = true;
             ironMan.receiveShadow = true;
+
             scene.add(ironMan)
         })
     })
 }
-createIronMan()
+
 
 const addNewBoxMesh = ( x: number, y: number, z:number ) => {
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -527,14 +528,12 @@ window.addEventListener('click', event => {
     // Cela stocke dans un tableau les coordonées
     // Si tu trouve un object qui intersecte
     // Et que l'objet trouvé est draggable true
-    if(found.length > 0 && found[0].object.userData.draggable){
+
+    if(found.length > 0 && found[0].object.userData.draggable){        
         // stocke le dans la variable globale draggable
         draggable = found[0].object
         console.log(`Un objet déplaçable a été trouvé : ${draggable.userData.name}`);
-        if (draggable.userData.name == "Circle"){
-            console.log("coucou le cercle");
-            camera.position.set(-25, 70, 200);
-        }
+        camera.position.set(draggable.position.x, draggable.position.y, camera.position.z);
     }
 });
 //# ------------- Déplacement des objets ------------- #\\
@@ -568,5 +567,6 @@ createBox();
 createSphere();
 createCylinder();
 createCastle();
+// createIronMan()
 // controls();
 animate();
